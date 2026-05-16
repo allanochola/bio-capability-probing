@@ -1,0 +1,9 @@
+{
+  "biological_activation_probe": {
+    "status": "exploratory",
+    "dataset_size": 10,
+    "representation_type": "final-layer mean pooled hidden states",
+    "model": "EleutherAI/pythia-410m",
+    "notes": "Results are exploratory and highly susceptible to lexical confounds and prompt artifacts."
+  }
+}
