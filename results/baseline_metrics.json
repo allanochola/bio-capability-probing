@@ -1,8 +1,57 @@
 {
-  "apollo_behavioral_baseline": {
-    "accuracy": 0.67,
-    "precision": 0.74,
-    "recall": 0.83,
-    "roc_auc": 0.64
-  }
+  "experiment": "apollo_behavioral_baseline",
+  "dataset": "roleplaying_plain_llama70b",
+  "model_representation": "tfidf_vectorizer",
+  "classifier": "logistic_regression",
+  "train_test_split": 0.2,
+  "stratified": true,
+  "class_weighting": "balanced",
+  "class_distribution": {
+    "deceptive": 257,
+    "non_deceptive": 99,
+    "total": 356
+  },
+  "metrics": {
+    "accuracy": 0.6667,
+    "precision": 0.7414,
+    "recall": 0.8269,
+    "roc_auc": 0.6438
+  },
+  "confusion_matrix": {
+    "true_negative": 5,
+    "false_positive": 15,
+    "false_negative": 9,
+    "true_positive": 43,
+    "total_test_samples": 72
+  },
+  "top_deceptive_features": [
+    "just",
+    "really",
+    "sure",
+    "family",
+    "know",
+    "recently",
+    "good",
+    "fine",
+    "came",
+    "lot"
+  ],
+  "top_non_deceptive_features": [
+    "honestly",
+    "discuss",
+    "focus",
+    "activities",
+    "track",
+    "foundation",
+    "income",
+    "week"
+  ],
+  "interpretation": "Modest above-chance separability achieved. High false positive rate indicates classifier bias toward deception prediction. Feature analysis suggests learning of socially persuasive language patterns rather than mechanistic deception signatures.",
+  "limitations": [
+    "Text-level only, no hidden-state analysis",
+    "Dataset imbalance (257 deceptive vs 99 non-deceptive)",
+    "Roleplaying artifacts may inflate separability",
+    "No adversarial robustness evaluation",
+    "No cross-dataset transfer testing"
+  ]
 }
