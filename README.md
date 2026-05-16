@@ -12,4 +12,10 @@ Exploratory activation- space probing experiments for biological task separabili
 
 ![PCA Projection](figures/confusion_matrix.png)
 
+## Figures
+
+### PCA Projection
+
+![PCA Projection](figures/roc_curve.png)
+
 
