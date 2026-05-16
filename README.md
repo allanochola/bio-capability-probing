@@ -33,32 +33,95 @@ The experiment uses:
 ---
 # Repository Structure
 
-```text
-bio-capability-probing/
-│
-├── notebooks/
-├── datasets/
-├── figures/
-├── results/
-└── writeups/
+## Quick Start
 
+To reproduce the Apollo behavioral baseline:
+
+```bash
+pip install -r requirements.txt
+jupyter notebook notebooks/01_apollo_baseline.ipynb
+```
+
+To explore activation-space probing on biological tasks:
+
+```bash
+pip install -r requirements.txt
+jupyter notebook notebooks/02_biological_probing.ipynb
+```
+
+## Key Results
+
+### Apollo Behavioral Baseline
+- **Accuracy:** 0.67
+- **Precision:** 0.74
+- **Recall:** 0.83
+- **ROC-AUC:** 0.64
+
+**Interpretation:** Modest above-chance separability between deceptive and non-deceptive outputs. Classifier likely captures linguistic/social framing patterns rather than mechanistic deception representations.
+
+**Top deceptive features:** just, really, sure, family, know, recently
+
+**Top non-deceptive features:** honestly, discuss, focus, activities, track, foundation
+
+### Biological Activation Probing
+Exploratory hidden-state probing experiments suggest partial representational separability under constrained conditions.
+
+**Important:** Results are highly preliminary and do not establish operational biological monitoring capability.
 
 ## Figures
 
-### PCA Projection
+### Confusion Matrix
+![Confusion Matrix](figures/confusion_matrix.png)
 
-![PCA Projection](figures/pca_projection.png)
+### ROC Curve
+![ROC Curve](figures/roc_curve.png)
 
-## Figures
+## Data & Reproducibility
 
-### PCA Projection
+- **Apollo baseline dataset:** Reconstructed from [Apollo Research deception-detection repository](https://github.com/ApolloResearch/deception-detection/)
+- **Biological prompts:** Manually constructed exploratory examples
+- **Metrics:** See `results/baseline_metrics.json`
+- **Dependencies:** See `requirements.txt`
 
-![PCA Projection](figures/confusion_matrix.png)
+## Important Limitations
 
-## Figures
+This work does **NOT** establish:
+- Robust deception detection
+- Biological threat assessment
+- Operational monitoring capability
 
-### PCA Projection
+The experiments are intentionally exploratory and susceptible to:
+- Dataset imbalance
+- Lexical confounds
+- Topical separability
+- Prompt artifacts
+- Tiny sample sizes
 
-![PCA Projection](figures/roc_curve.png)
+## Future Directions
 
+Potential extensions include:
+- Larger biological prompt datasets
+- Intermediate-layer probing
+- Adversarial robustness evaluation
+- Hidden-state transfer analysis
+- Sparse autoencoder analysis
+- Cross-model comparison
 
+## Citation
+
+```bibtex
+@software{ochola2026biocapabilityprobing,
+  author = {Ochola, Allan},
+  title = {Bio Capability Probing: Exploratory Activation-Space Monitoring for Biological Task Domains},
+  year = {2026},
+  url = {https://github.com/allanochola/bio-capability-probing}
+}
+```
+
+## License
+
+MIT License - See LICENSE file for details
+
+---
+
+**Status:** Exploratory research artifact | **Last updated:** May 2026
