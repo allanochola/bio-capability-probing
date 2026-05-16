@@ -106,39 +106,35 @@ However, performance remained substantially weaker on the non-deceptive class.
 
 ---
 
-# 5. Confusion Matrix Interpretation
-
-## Confusion Matrix
+## 5. Confusion Matrix Interpretation
 
 ![Confusion Matrix](../figures/confusion_matrix.png)
 
-|                    | Predicted Non-Deceptive | Predicted Deceptive |
-| ------------------ | ----------------------- | ------------------- |
-| True Non-Deceptive | 5                       | 15                  |
-| True Deceptive     | 9                       | 43                  |
+**Matrix values:**
+
+|  | Predicted Non-Deceptive | Predicted Deceptive |
+|---|---|---|
+| **True Non-Deceptive** | 5 | 15 |
+| **True Deceptive** | 9 | 43 |
 
 The classifier showed a strong tendency to predict deception, likely influenced by:
 
-* dataset imbalance,
-* roleplaying structure,
-* and recurring linguistic patterns associated with deceptive scenarios.
+- dataset imbalance,
+- roleplaying structure,
+- and recurring linguistic patterns associated with deceptive scenarios.
 
 The high false-positive rate for non-deceptive examples suggests that the model frequently interprets ambiguous conversational language as deceptive under this dataset distribution.
-
 ---
 
-# 6. ROC Curve Interpretation
-
-## ROC Curve
+## 6. ROC Curve Interpretation
 
 ![ROC Curve](../figures/roc_curve.png)
 
 The ROC curve remained consistently above random baseline behavior, suggesting the presence of recoverable signal within the rollout outputs.
 
-At the same time, the relatively modest ROC-AUC score indicates that separability remains weak and highly constrained under this simplistic setup.
+At the same time, the relatively modest ROC-AUC score (0.64) indicates that separability remains weak and highly constrained under this simplistic setup.
 
 The curve shape further suggests that the classifier relies on partial linguistic regularities rather than highly robust or strongly separable deception representations.
-
 ---
 
 # 7. Feature Analysis
