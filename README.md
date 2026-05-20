@@ -58,7 +58,7 @@ The current Zenodo publication (DOI: 10.5281/zenodo.20244912) documents phases 1
 Extended analysis covering phases 4–8 will be published as a supplementary document. See `ZENODO_EXTENSION_PHASES_5-8.md` (in development) or the `/writeups` directory for current phase documentation.
 
 ### Dataset Expansion in Progress
-Current research documented here uses N=10 biological prompt pairs for exploratory methodological validation. **We are actively expanding the dataset to N=500 prompt pairs** with diverse vocabulary, task domains, and semantic variations to enable robust k-fold cross-validation and statistical validation of findings. This scaled-up evaluation with proper train/test splitting will be the subject of follow-up research.
+Current research documented here uses N=10 biological prompt pairs for exploratory methodological validation. **I am actively expanding the dataset to N=500 prompt pairs** with diverse vocabulary, task domains, and semantic variations to enable robust k-fold cross-validation and statistical validation of findings. This scaled-up evaluation with proper train/test splitting will be the subject of follow-up research.
 
 ---
 
