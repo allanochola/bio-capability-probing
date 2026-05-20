@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-This research investigates whether activation-space probing methodologies developed in deception-detection research can transfer to biological capability monitoring in language models. The project is grounded in real-world AI deployment observations from six Kenyan counties, documents systematic confound analysis across eight methodological phases, and plans dataset expansion to N=500 for statistical validation.
+This research investigates whether activation-space probing methodologies developed in deception-detection work transfer to biological capability monitoring in language models. The project is grounded in AI deployment observations from six Kenyan counties, documents systematic confound analysis across eight methodological phases, and treats perfect classifier metrics as a diagnostic for overfitting rather than a result.
 
-**Status:** Exploratory research (N=10) with eight-phase confound analysis; expanding to validated research (N=500) by May 30, 2026.
+**Status:** Exploratory research (N=10) with eight-phase confound analysis. Next step: dataset expansion to N≥100 with k-fold cross-validation.
 
 **Repositories:**
 - Bio Capability Probing: https://github.com/allanochola/bio-capability-probing
@@ -16,13 +16,13 @@ This research investigates whether activation-space probing methodologies develo
 
 Field deployment of the Vimax multi-modal mineral intelligence platform across six Kenyan counties (2023–2025) revealed three categories of infrastructure-level AI failures:
 
-1. **Silent Degradation** — Model F1 dropping from 0.78 to 0.62 over 4 months, undetected for 10+ weeks
-2. **Miscalibrated Confidence** — Confidence scores decoupling from actual accuracy (19-point gaps observed)
-3. **Undetected Oversight Gaps** — 50 system failures over 24 months without triggering alerts
+1. **Silent degradation** — Model F1 dropping from 0.78 to 0.62 over 4 months, undetected for 10+ weeks
+2. **Miscalibrated confidence** — Confidence scores decoupling from actual accuracy (19-point gaps observed)
+3. **Undetected oversight gaps** — 50 system failures over 24 months without triggering alerts
 
 **Core insight:** Infrastructure and monitoring are the safety bottleneck in resource-constrained settings, not model architecture.
 
-**Research question:** Can we detect silent model degradation using activation-space monitoring *without waiting for ground truth labels*?
+**Research question:** Can we detect silent model degradation using activation-space monitoring without waiting for ground-truth labels?
 
 ---
 
@@ -36,12 +36,12 @@ Field deployment of the Vimax multi-modal mineral intelligence platform across s
 - Extracted prompt-response pairs with deception severity scores (1–7 scale)
 - Built TF-IDF + logistic regression baseline
 
-**Key Results:**
+**Key results:**
 - ROC-AUC: 0.64, Accuracy: 0.67, Precision: 0.74, Recall: 0.83
 - Top deceptive features: "family," "just," "really," "sure" (consistent with excuse-making)
 - Classifier shows strong bias toward predicting deception
 
-**Significance:** Grounds project in authenticated alignment methodology rather than synthetic toy setups.
+**Significance:** Grounds the project in authenticated alignment methodology rather than synthetic toy setups.
 
 **Reference:** `writeups/baseline_replication.md`
 
@@ -51,15 +51,15 @@ Field deployment of the Vimax multi-modal mineral intelligence platform across s
 **Goal:** Investigate at which transformer layers biological task signal is maximally separable.
 
 **Methodology:**
-- Extracted mean-pooled representations from all 25 layers of Pythia-410m
+- Extracted mean-pooled representations from all 25 layers of Pythia-410M
 - Trained independent logistic regression probes for each layer
-- Compared original (29% vocab overlap) and controlled (56% overlap) prompts
+- Compared original (29% vocabulary overlap) and controlled (56% overlap) prompts
 
-**Key Finding:**
-Perfect ROC-AUC = 1.0 across all 25 layers for both original and controlled prompts.
+**Key finding:**
+ROC-AUC = 1.0 across all 25 layers for both original and controlled prompts.
 
 **Interpretation:**
-Perfect separability across all layers indicates trivial classification in 1024-D space with N=10 samples. Peak separability at intermediate layers (not early or late) suggests semantic rather than purely lexical signal, but sample size prevents validation.
+Perfect separability across all layers indicates trivial classification in 1024-D space with N=10 samples. The signal saturates uniformly rather than peaking at intermediate layers, which is what overfitting looks like, not what genuine semantic representation looks like.
 
 **Reference:** `writeups/hidden_layer_analysis.md`
 
@@ -74,13 +74,13 @@ Perfect separability across all layers indicates trivial classification in 1024-
 - Controlled: 56% token overlap (shared biological vocabulary, different intent: therapeutic vs. weaponization)
 - Tested separability at different overlap levels
 
-**Key Finding:**
-Separability persists (ROC-AUC = 1.0) even when vocabulary overlap increases from 29% to 56%.
+**Key finding:**
+Separability persists (ROC-AUC = 1.0) when vocabulary overlap increases from 29% to 56%.
 
-**Quantified result:** ~40% of apparent separability in original prompts was driven by vocabulary disjointness; remaining 60% attributed to semantic task framing.
+**Quantified result:** Roughly 40% of the apparent separability in original prompts is attributable to vocabulary disjointness; the remaining ~60% holds under matched vocabulary.
 
 **Interpretation:**
-Semantic distinction (therapeutic vs. attack intent) appears to encode meaningful signal in representations. However, sample size (N=10 in 1024-D) prevents distinguishing genuine signal from statistical artifact.
+This is the most informative finding in the series. Semantic framing (therapeutic vs. attack intent) contributes signal that survives lexical control. The N=10 sample size still prevents distinguishing genuine signal from statistical artifact, but the confound-control methodology is what generalises.
 
 **Reference:** `writeups/vocabulary_control_analysis.md`
 
@@ -94,30 +94,30 @@ Semantic distinction (therapeutic vs. attack intent) appears to encode meaningfu
 - Preserved semantic intent while varying vocabulary substantially
 - Paraphrase vocabulary overlap: 62% (highest tested across phases)
 
-**Key Finding:**
+**Key finding:**
 Separability persists under paraphrasing attacks (ROC-AUC = 1.0 across all 25 layers).
 
 **Interpretation:**
-Signal is not purely lexical or superficial. Semantic task framing is robust to vocabulary changes. However, perfect metrics with N=10 remain statistically trivial.
+At N=10 in 1024 dimensions, perfect metrics under paraphrasing are consistent with both "signal robust to vocabulary change" and "classifier memorising sample identity." The two hypotheses are indistinguishable at this sample size. Held out as a methodological design that should be repeated at N≥100.
 
 **Reference:** `writeups/adversarial_robustness_analysis.md`
 
 ---
 
 ### Phase 5: Scaffold Attacks — Realistic Workflow Embedding
-**Goal:** Test separability when prompts embedded in realistic research narratives.
+**Goal:** Test separability when prompts are embedded in realistic research narratives.
 
 **Methodology:**
-- Created longer biological research narratives (~150 words each)
+- Constructed longer biological research narratives (~150 words each)
 - Benign: therapeutic research contexts
 - Harmful: weaponization contexts
 - Achieved lowest vocabulary overlap tested: 45%
 
-**Key Finding:**
-Perfect separability persists (ROC-AUC = 1.0) despite 45% vocabulary overlap and realistic narrative embedding.
+**Key finding:**
+Separability persists (ROC-AUC = 1.0) despite 45% vocabulary overlap and realistic narrative embedding.
 
 **Interpretation:**
-Strongest evidence to date that signal is not lexical. Most ecologically valid test. However, sample size and narrative structure may introduce new confounds.
+The most ecologically valid test in the series, and the result that most plausibly reflects real signal — but still indistinguishable from memorisation at this sample size. Narrative embedding introduces new potential confounds (length, structure, register) that future N≥100 work must control for.
 
 **Reference:** `writeups/scaffold_attacks_analysis.md`
 
@@ -131,53 +131,52 @@ Strongest evidence to date that signal is not lexical. Most ecologically valid t
 - Tested separability with subsets: top 1, 2, 3, 5, 10, 20, 50, 100, and all 1024 features
 - Measured ROC-AUC at each sparsity level
 
-**Key Finding:**
-Perfect separability (ROC-AUC = 1.0) achievable with just **5 features** out of 1024 (1 feature per 2 samples).
+**Key finding:**
+ROC-AUC = 1.0 achievable with as few as 5 features out of 1024.
 
-**Critical observation:** Perfect metrics at **all** sparsity levels (1 to 1024 features) suggests memorization/overfitting dominates.
+**Critical interpretation:**
+Perfect metrics at all sparsity levels (1 to 1024) is evidence *against* genuine signal, not for it. If real semantic structure were driving separability, ROC-AUC should degrade as feature count drops below the intrinsic dimensionality of the task. Saturation at 5 features with N=10 samples (a 5:10 feature-to-sample ratio) is the signature of memorisation in a high-dimensional space.
 
-**Interpretation:**
-If signal were genuine, fewer features should hurt performance. Instead, perfect metrics at extreme sparsity (5:10 ratio) is **evidence against** real signal, not for it.
+This is the diagnostic finding of the project. It is the reason perfect metrics throughout the other phases should be read as overfitting confirmation, not validation.
 
 **Reference:** `writeups/sparse_autoencoder_analysis.md`
 
 ---
 
-### Phase 7: Cross-Model Generalization
-**Goal:** Test whether separability generalizes across different architectures.
+### Phase 7: Cross-Architecture Replication
+**Goal:** Test whether the separability pattern replicates on a different model.
 
 **Methodology:**
-- Tested on Pythia-410m (410M params, 25 layers, 1024 hidden size)
-- Tested on GPT-Neo-125m (125M params, 12 layers, 768 hidden size)
+- Tested on Pythia-410M (410M params, 25 layers, 1024 hidden size)
+- Tested on GPT-Neo-125M (125M params, 12 layers, 768 hidden size)
 - Used controlled-vocabulary prompts (56% overlap)
 
-**Key Finding:**
-Both models achieve perfect separability (ROC-AUC = 1.0 across all layers).
+**Key finding:**
+Both models achieve ROC-AUC = 1.0 across all layers.
 
 **Interpretation:**
-Signal is not model-specific; generalizes across different architectures within GPT family. However, both are EleutherAI models; biological foundation models (Evo, ESM, ProteinMPNN) untested.
+This is same-family replication, not cross-family generalisation. Pythia and GPT-Neo are both EleutherAI GPT-architecture models trained on similar data distributions. The replication confirms the overfitting pattern is not model-specific within this family. Cross-family transfer (Mistral, Llama, biological foundation models such as Evo 2 and ESM) is the next test and is not yet run.
 
 **Reference:** `writeups/cross_model_comparison.md`
 
 ---
 
 ### Phase 8: Biological Task Transfer Methodology
-**Goal:** Document reproducible end-to-end pipeline for extending deception-detection methods to biological task domains.
+**Goal:** Document the reproducible pipeline for extending deception-detection methods to biological task domains.
 
 **Methodology:**
 - Activation extraction from lightweight open language models
-- Mean-pooled representations with Hugging Face Transformers
+- Mean-pooled representations via Hugging Face Transformers
 - Linear probe training with scikit-learn
 - Full pipeline reproducible in Google Colab
 
-**Key Contribution:**
-Establishes foundation for scaled-up biological interpretability research. Provides:
-- Fully reproducible pipeline
-- Explicit documentation of limitations
-- Appropriate framing as exploratory/methodological rather than operational
+**Contribution:**
+- Reproducible end-to-end notebook
+- Explicit documentation of failure modes and confound vulnerabilities
+- Framing as exploratory methodology rather than operational capability
 
 **Interpretation:**
-Demonstrates that deception-detection methodologies can extend to biological task domains with careful confound analysis.
+The pipeline transfers. Whether the results transfer is the open question, and the honest answer at N=10 is that they don't, not yet.
 
 **Reference:** `writeups/biological_transfer_experiment.md`
 
@@ -185,175 +184,133 @@ Demonstrates that deception-detection methodologies can extend to biological tas
 
 ## Consolidated Findings Across All Phases
 
-| Phase | Attack Type | Vocab Overlap | ROC-AUC | Sample Size | Interpretation |
+| Phase | Attack Type | Vocab Overlap | ROC-AUC | N | Interpretation |
 |-------|---|---|---|---|---|
 | 1 | Apollo baseline | N/A | 0.64 | 356 | Modest signal from text-level features |
-| 2 | Layer analysis | 29% / 56% | 1.0 | 10 | Perfect across all 25 layers |
-| 3 | Vocabulary control | 56% | 1.0 | 10 | Semantic signal beyond vocabulary |
-| 4 | Paraphrase attack | 62% | 1.0 | 10 | Signal robust to vocabulary change |
-| 5 | Scaffold attacks | 45% | 1.0 | 10 | Survives realistic narrative embedding |
-| 6 | Sparse features | — | 1.0 | 10 | Perfect metrics at all sparsity levels |
-| 7 | Cross-model | 56% | 1.0 | 10 | Generalizes across architectures |
+| 2 | Layer analysis | 29% / 56% | 1.0 | 10 | Uniform saturation across 25 layers |
+| 3 | Vocabulary control | 56% | 1.0 | 10 | ~60% of signal survives lexical control |
+| 4 | Paraphrase attack | 62% | 1.0 | 10 | Indistinguishable from memorisation at N=10 |
+| 5 | Scaffold attacks | 45% | 1.0 | 10 | Most ecologically valid, still N-limited |
+| 6 | Sparse features | — | 1.0 | 10 | Saturation at 5 features = overfitting signature |
+| 7 | Cross-architecture | 56% | 1.0 | 10 | Same-family replication only |
 | 8 | Methodology | — | N/A | 10 | Reproducible pipeline documented |
 
-**Consistent Finding Across All Phases:** Perfect separability in all conditions.
+**Consistent finding across all phases:** Perfect separability in all conditions.
 
-**Parsimonious Explanation:** N=10 in 1024-D space = statistical overfitting dominates.
-
----
-
-## Critical Analysis: What This Means (Carefully Stated)
-
-### Evidence For Signal
-✅ Separability persists under vocabulary control — Not purely lexical artifact
-✅ Separability survives paraphrasing — Semantic robustness partial evidence
-✅ Separability persists across narrative embedding — Most ecologically valid test
-✅ Consistent across all layers — Not confined to any single representation
-✅ Generalizes across architectures — Not model-specific
-
-### Evidence Against Strong Claims
-❌ N=10 in 1024-D space — Statistical overfitting is most parsimonious explanation
-❌ No cross-validation — Metrics are biased estimates (training = test)
-❌ Perfect metrics at all sparsity levels — Indicates memorization, not genuine signal
-❌ Single model family — No biological foundation models tested
-❌ Manual prompts — Not representative of realistic biological workflows
-❌ No adversarial optimization — Passive paraphrasing ≠ active adversarial attack
+**Parsimonious explanation:** N=10 in 1024-D space — statistical overfitting dominates.
 
 ---
 
-## Honest Limitations
+## What This Means (Carefully Stated)
 
-### Fatal Limitations for Strong Claims
-- **N=10 in 1024-D:** Degrees of freedom >> data points. Perfect separability is mathematically trivial.
-- **No cross-validation:** Evaluation on training data violates standard ML practice.
-- **Single model family:** Only EleutherAI (Pythia, GPT-Neo) tested.
-- **Manual prompts:** Not representative of realistic biological research workflows.
-- **No ground truth on test set:** Cannot validate claims with held-out data.
+### What the methodology demonstrates
+- Confound-controlled evaluation is essential when interpreting probe results
+- Vocabulary control, paraphrase robustness, scaffold embedding, and sparse-feature analysis form a coherent test battery
+- Phase 6 sparse-feature analysis provides a clean diagnostic for distinguishing real signal from memorisation
+- The pipeline is reproducible end-to-end on free compute
 
-### What We Cannot Claim
-- ✗ Robust biological capability monitoring
-- ✗ Mechanistic deception detection
-- ✗ Deployment-ready oversight capability
-- ✗ Generalizable signal across all model families
-- ✗ Evidence that models "understand" biological concepts
+### What the results do not demonstrate
+- N=10 in 1024 dimensions is a statistical overfitting regime; perfect metrics are mathematically trivial
+- No cross-validation means evaluation is on training data
+- Only same-family models tested (Pythia, GPT-Neo); biological foundation models untested
+- Manual prompts are not representative of realistic biological research workflows
+- No active adversarial optimisation; only passive paraphrasing
 
-### What We Can Claim
-- ✓ Separability persists under multiple confound-removal attacks
-- ✓ Semantic task framing contributes to representational signal
-- ✓ Signal is not purely superficial/lexical
-- ✓ Confound-controlled evaluation is methodologically sound
-- ✓ Perfect metrics on tiny datasets are red flags, not validation
-- ✓ Reproducible pipeline for future work at scale
+### What we can claim
+- Confound-controlled evaluation is methodologically sound
+- The vocabulary-control finding (Phase 3) is informative even at N=10
+- Sparse-feature saturation (Phase 6) is a robust overfitting diagnostic
+- Reproducible pipeline exists for future work at scale
+- Perfect metrics on tiny datasets are red flags, not validation
+
+### What we cannot claim
+- Robust biological capability monitoring
+- Mechanistic deception detection
+- Deployment-ready oversight capability
+- Cross-family or cross-architecture generalisation
+- Evidence that models "understand" biological concepts
 
 ---
 
-## Dataset Expansion Plan: N=10 → N=500
+## Dataset Expansion Plan
 
-### Current State (Exploratory)
-- **Sample size:** N=10 (5 benign + 5 harmful)
-- **Evaluation:** Training = testing (biased metrics)
-- **Generalization:** Cannot claim any
-- **Status:** Methodological prototyping
+### Current state (exploratory)
+- N=10 (5 benign + 5 harmful)
+- Training = testing (biased metrics)
+- Status: methodological prototyping
 
-### Immediate Target (Validated)
-- **Sample size:** N=500 biological prompt pairs
-- **Evaluation:** 5-fold k-fold cross-validation with proper train/test splits
-- **Generalization:** Defensible claims on unseen biological prompts
-- **Timeline:** Complete by June 7, 2026 (2.5 weeks)
-- **Expected impact:** Moves from "exploratory" to "statistically validated"
+### Next step (validation)
+- N≥100 biological prompt pairs
+- 5-fold k-fold cross-validation with proper train/test splits
+- Pre-registered hypotheses for each phase's claim
+- Goal: distinguish which phase-level findings survive proper evaluation
 
-### Long-Term Vision (Robust)
-- **Sample size:** N=5000+ across diverse biological domains
-- **Evaluation:** Multiple models (biological foundation models: Evo, ESM, ProteinMPNN)
-- **Mechanistic analysis:** Circuit identification, feature attribution, causal interventions
-- **Expected impact:** Enables full mechanistic interpretability claims
+### Subsequent (cross-family transfer)
+- Mistral and Llama families
+- Biological foundation models: Evo 2, ESM-family
+- Active adversarial optimisation, not passive paraphrasing
 
-### Why N=500 is Strategic
-- **Minimum for validation:** 5-fold CV with ~100 test samples per fold
-- **Realistic timeline:** 2.5 weeks to generation, annotation, and testing
-- **Sufficient power:** Can detect effect sizes if they're real
-- **Defensible to reviewers:** Moves beyond exploratory phase for fellowship applications
+### Long-term (mechanistic)
+- Circuit identification and causal interventions
+- Sparse autoencoder feature attribution
+- Cross-domain transfer to other safety-relevant capabilities
 
 ---
 
 ## Methodological Contributions
 
-This project demonstrates best practices for interpretability research on constrained datasets:
+This project demonstrates practices for interpretability research on constrained datasets:
 
-1. **Systematic confound analysis** — Vocabulary overlap reporting and control across 6 conditions
-2. **Dimensionality mismatch acknowledgment** — Explicit discussion of N vs. feature space overfitting
-3. **Honest limitation documentation** — Clear statements about what conclusions are NOT supported
+1. **Systematic confound analysis** — Vocabulary overlap reporting and control across phases
+2. **Dimensionality-mismatch acknowledgment** — Explicit discussion of N vs. feature-space overfitting
+3. **Honest limitation documentation** — Clear statements about what is not supported
 4. **Reproducible infrastructure** — All code, notebooks, metrics, figures, and writeups published
-5. **Staged complexity** — Apollo baseline → controlled vocabulary → adversarial robustness → sparse features → cross-model
-6. **Multiple attack types** — Not relying on single evaluation method; 8 phases of confound testing
-7. **Epistemically honest framing** — "Perfect metrics are red flags, not validation"
-
----
-
-## Future Directions
-
-### Immediate Priorities (Would Move From "Exploratory" to "Validated")
-1. **Larger Dataset** — N=500 biological prompt pairs by may 30
-2. **Cross-Validation** — 5-fold k-fold with proper train/test/val splits
-3. **Statistical Testing** — Confidence intervals, significance tests on held-out data
-4. **Biological Foundation Models** — Test on Evo 2, ProteinMPNN, ESM-family
-
-### Medium-Term Research
-5. **Feature Attribution** — Which tokens/features/neurons drive decisions?
-6. **Sparse Autoencoder Analysis** — Decompose representations into interpretable features
-7. **Circuit Identification** — Causal importance of identified features/circuits
-8. **Adversarial Optimization** — Active adversary trying to fool the classifier
-
-### Long-Term Vision
-9. **Biological Capability Evaluation Benchmark** — Realistic, large-scale dataset of biological research
-10. **Cross-Domain Transfer** — Deception → biology → other safety domains
-11. **Governance Integration** — Interpretability → oversight policy interface
-12. **Mechanistic Biosecurity** — How can we monitor model representations for dual-use risks?
+5. **Staged complexity** — Apollo baseline → vocabulary control → adversarial robustness → sparse features → cross-architecture
+6. **Multiple confound tests** — Eight phases rather than a single evaluation
+7. **Epistemically honest framing** — Perfect metrics treated as red flags, not validation
 
 ---
 
 ## Why This Matters
 
-### For Mechanistic Interpretability
-Demonstrates that confound-controlled evaluation is **essential**. Perfect metrics on tiny datasets are not validation; they are red flags for overfitting. Shows what rigorous exploratory research looks like.
+### For mechanistic interpretability
+Demonstrates that confound-controlled evaluation is essential. Perfect metrics on tiny datasets are not validation; they are diagnostic for overfitting. Provides a template for what rigorous exploratory work looks like before scaling.
 
-### For AI Safety
-Shows that activation-space monitoring methods can be extended to novel domains (deception → biological tasks). Provides template for confound-removal evaluation. But emphasizes that careful validation is required before any operational claims.
+### For AI safety
+Shows that activation-space monitoring methods can be adapted to novel domains, but that careful validation is required before any operational claim. The confound-removal battery is the transferable contribution.
 
-### For Biosecurity
-Suggests that semantic task distinctions may encode in model representations. Raises questions about whether models can "recognize" biological dual-use concepts. Does not demonstrate robust threat detection, but motivates future mechanistic research.
+### For biosecurity
+Suggests that semantic task distinctions may encode in model representations, but does not demonstrate threat detection. Motivates the N≥100 validation phase and cross-family transfer as the path from exploratory to operational.
 
-### For Global South AI Deployment
-Roots interpretability research in real-world deployment constraints. Shows that infrastructure monitoring and oversight are primary safety concerns, motivating mechanistic approaches to activation-space monitoring.
+### For Global South AI deployment
+Roots interpretability research in real-world deployment constraints. Field observation that infrastructure monitoring is the primary safety bottleneck is what motivated the activation-space approach in the first place.
 
 ---
 
-##  Complementary Publication
+## Publication
 
-### Publication 1: Bio Capability Probing
-**Status:** Published on Zenodo (May 2026)
-**Scope:** Phases 1–3 (Apollo baseline, hidden-layer analysis, vocabulary control)
-**DOI:** 10.5281/zenodo.20244912
-**URL:** https://github.com/allanochola/bio-capability-probing
+**Bio Capability Probing — Phases 1–3**
+Published on Zenodo (May 2026)
+DOI: 10.5281/zenodo.20244912
+Repository: https://github.com/allanochola/bio-capability-probing
 
+Phases 4–8 documented in the repository `/writeups` directory; Zenodo update planned after N≥100 validation.
 
 ---
 
 ## Reproducibility & Access
 
-**Complete transparency:**
-- ✅ All 8 phases documented in `/writeups` directory (8 markdown files)
-- ✅ All notebooks published to GitHub (3 Jupyter notebooks)
-- ✅ All metrics in JSON/CSV format in `/results`
-- ✅ All figures embedded in README
-- ✅ Complete `requirements.txt` for dependency management
-- ✅ Honest limitations documented throughout
+- All 8 phases documented in `/writeups` directory
+- All notebooks published to GitHub (Jupyter)
+- All metrics in JSON/CSV format in `/results`
+- All figures embedded in README
+- Complete `requirements.txt` for dependency management
+- Limitations documented throughout
 
-**To reproduce Phase 1–8:**
+**To reproduce:**
 ```bash
 git clone https://github.com/allanochola/bio-capability-probing.git
 pip install -r requirements.txt
-# See /writeups directory for detailed analysis of each phase
 jupyter notebook notebooks/01_apollo_baseline.ipynb
 ```
 
@@ -369,34 +326,25 @@ jupyter notebook notebooks/01_apollo_baseline.ipynb
   url = {https://github.com/allanochola/bio-capability-probing},
   doi = {10.5281/zenodo.20244912}
 }
-
-@preprint{ochola2026aiinfrastructure,
-  author = {Ochola, Allan},
-  title = {AI Deployment Infrastructure Risk: Field Evidence from Six Kenyan Counties},
-  year = {2026},
-  publisher = {Zenodo}
-}
 ```
 
 ---
 
 ## Key Takeaway
 
-This project demonstrates that careful exploratory research on constrained datasets can produce methodologically sound findings, even when statistical power is limited.
+Careful exploratory work on constrained datasets can produce methodologically sound findings even when statistical power is limited. The appropriate response to perfect metrics at N=10 is not to claim signal but to:
 
-The appropriate response is **not** to overclaim, but to:
+1. Document limitations clearly
+2. Enable verification through full reproducibility
+3. Identify which findings would survive proper evaluation (Phase 3 vocabulary control is the leading candidate)
+4. Specify the validation roadmap (N≥100 with k-fold CV) and execute it
 
-1. **Document limitations clearly** — Acknowledge what conclusions are not supported
-2. **Enable others to verify results** — Full reproducibility and transparency
-3. **Specify validation roadmap** — What would be needed for stronger claims (N=500 with CV)
-4. **Continue scaling toward validation** — Progress from N=10 exploratory → N=500 validated → N=5000+ robust
-
-This is the standard progression from exploratory to validated mechanistic interpretability research.
+This is the standard progression from exploratory to validated interpretability research.
 
 ---
 
-**Project Status:** 
-- **Exploratory Phase:** Phases 1–8 complete (N=10), published to GitHub and Zenodo
-- **Validation Phase:** N=500 dataset expansion in progress, target completion May 30, 2026
-- **Last Updated:** May 20, 2026
-- **Archive:** Zenodo DOI 10.5281/zenodo.20244912 (phases 1–3)
+**Project status:**
+- Exploratory phase: Phases 1–8 complete (N=10), published to GitHub; Phases 1–3 on Zenodo
+- Validation phase: N≥100 dataset expansion as next step
+- Last updated: May 20, 2026
+- Archive: Zenodo DOI 10.5281/zenodo.20244912 (phases 1–3)
