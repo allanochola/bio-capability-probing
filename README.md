@@ -6,7 +6,7 @@ Exploratory experiments investigating whether probing methodologies inspired by 
 
 ## Overview
 
-This repository contains a six-phase confound-controlled interpretability study evaluating biological task separability in language model hidden states.
+This repository contains an eight-phase confound-controlled interpretability study evaluating biological task separability in language model hidden states.
 
 **Research Question:** Can activation-space probing distinguish between benign and harmful biological task framings when vocabulary, paraphrasing, and realistic scaffolding are controlled?
 
@@ -36,10 +36,10 @@ bio-capability-probing/
 │   ├── roc_curve.png
 │   ├── layer_separability.png
 │   ├── vocabulary_control_comparison.png
-│   ├── scaffold_attacks_layer_performance.png
-│   ├── feature_importance_distribution.png
-│   ├── cross_model_roc_comparison.png
-│   └── [additional figures]
+│   ├── adversarial_robustness_comparison.png
+│   ├── pca_projection.png
+│   ├── best_layer_pca.png
+│   └── sparse_autoencoder_analysis.png
 ├── results/
 │   ├── baseline_metrics.json
 │   ├── layer_analysis_results.csv
@@ -74,6 +74,8 @@ This research evaluates biological task separability through systematic adversar
 
 ![Layer Separability Analysis](figures/layer_separability.png)
 
+![Best Layer PCA](figures/best_layer_pca.png)
+
 - **Reference:** See `writeups/hidden_layer_analysis.md`
 
 #### Phase 3: Vocabulary-Controlled Confounds
@@ -90,15 +92,17 @@ This research evaluates biological task separability through systematic adversar
 - **Approach:** Rewrote prompts semantically while preserving intent; increased vocabulary overlap to 62%
 - **Result:** Separability survives paraphrasing attacks (ROC-AUC = 1.0 across all layers)
 - **Implication:** Signal is not purely superficial vocabulary; semantic task framing is robust to lexical variation
+
+![Adversarial Robustness Comparison](figures/adversarial_robustness_comparison.png)
+
+![Complete Adversarial Robustness Grid](figures/complete_adversarial_robustness_grid.png)
+
 - **Reference:** See `writeups/adversarial_robustness_analysis.md`
 
 #### Phase 5: Scaffold Attacks — Realistic Workflow Embedding
 - **Approach:** Embedded prompts in longer research narratives (≈150 words each); achieved lowest vocabulary overlap tested (45%)
 - **Result:** Perfect separability persists (ROC-AUC = 1.0)
 - **Significance:** Strongest evidence to date that signal is not lexical; most ecologically valid test
-
-![Scaffold Attacks Layer Performance](figures/scaffold_attacks_layer_performance.png)
-
 - **Reference:** See `writeups/scaffold_attacks_analysis.md`
 
 #### Phase 6: Sparse Feature Analysis
@@ -106,7 +110,7 @@ This research evaluates biological task separability through systematic adversar
 - **Result:** Perfect separability achievable with just 5 features out of 1024 (1 feature per 2 samples)
 - **Concern:** Extreme sparsity + extreme dimensionality mismatch = strong evidence for overfitting interpretation
 
-![Feature Importance Distribution](figures/feature_importance_distribution.png)
+![Sparse Autoencoder Analysis](figures/sparse_autoencoder_analysis.png)
 
 - **Reference:** See `writeups/sparse_autoencoder_analysis.md`
 
@@ -114,9 +118,6 @@ This research evaluates biological task separability through systematic adversar
 - **Approach:** Tested same prompts on two different model architectures (Pythia-410m vs. GPT-Neo-125m; 410M and 125M parameters respectively)
 - **Result:** Both models achieve perfect separability (ROC-AUC = 1.0 across all layers)
 - **Implication:** Signal not model-specific; generalizes across architectural variation within GPT family
-
-![Cross-Model ROC Comparison](figures/cross_model_roc_comparison.png)
-
 - **Limitation:** Same model family; biological foundation models (Evo 2, ESM, ProteinMPNN) not yet tested
 - **Reference:** See `writeups/cross_model_comparison.md`
 
@@ -265,18 +266,18 @@ Potential extensions include:
 
 ### Phase 2: Hidden-Layer Analysis
 - `layer_separability.png` — ROC-AUC progression across all 25 layers
+- `best_layer_pca.png` — PCA projection of peak-separability layer
+- `pca_projection.png` — PCA visualization of benign vs. harmful prompts
 
 ### Phase 3: Vocabulary Control
 - `vocabulary_control_comparison.png` — Separability at different vocabulary overlap levels (29%, 56%)
 
-### Phase 5: Scaffold Attacks
-- `scaffold_attacks_layer_performance.png` — Layer-wise ROC-AUC for scaffolded prompts (45% overlap)
+### Phase 4: Adversarial Robustness
+- `adversarial_robustness_comparison.png` — Robustness across paraphrase, scaffold, and sparse attacks
+- `complete_adversarial_robustness_grid.png` — Comprehensive comparison of all attack types
 
 ### Phase 6: Sparse Features
-- `feature_importance_distribution.png` — Feature ranking by activation difference; separability vs. sparsity
-
-### Phase 7: Cross-Model
-- `cross_model_roc_comparison.png` — ROC-AUC comparison across Pythia-410m and GPT-Neo-125m
+- `sparse_autoencoder_analysis.png` — Feature ranking and separability vs. sparsity tradeoff
 
 ---
 
@@ -304,4 +305,4 @@ MIT License - See LICENSE file for details
 
 **Associated Publication:** Ochola, A. & Varadarajan, V. (2026). Bio Capability Probing: Exploratory Activation-Space Monitoring for Biological Task Domains. Zenodo. https://doi.org/10.5281/zenodo.20244912
 
-**Extended Analysis:** See `ZENODO_EXTENSION_PHASES_5-8.md` for phases 5–8 documentation.
+**Extended Analysis:** See `/writeups` directory for detailed phase documentation (8 comprehensive writeups).
