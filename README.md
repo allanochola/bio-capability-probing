@@ -300,7 +300,7 @@ Potential extensions include:
 
 ```bibtex
 @software{ochola2026biocapabilityprobing,
-  author = {Ochola, Allan and Varadarajan, Vijayakumar},
+  author = {Ochola, Allan},
   title = {Bio Capability Probing: Exploratory Activation-Space Monitoring for Biological Task Domains},
   year = {2026},
   url = {https://github.com/allanochola/bio-capability-probing},
