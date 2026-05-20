@@ -1,176 +1,282 @@
-# Bio Capability Probing: Exploratory Activation-Space Monitoring for Biological Task Domains
+# Bio Capability Probing
 
-**Author:** Allan Ochola | **Date:** May 2026 | **Published:** Zenodo DOI: 10.5281/zenodo.20244912
-
----
-
-## Quick Summary
-
-Exploratory research investigating whether activation-space probing methodologies transfer to biological capability monitoring in language models.
-
-**Key Finding:** Separability between benign and harmful biological prompts persists across ALL adversarial attack types and generalizes across models (ROC-AUC = 1.0). Sparse autoencoder analysis reveals task distinction encodes in just 5 dimensions—but this reinforces the overfitting hypothesis at N=10 sample size.
-
-**Contribution:** Comprehensive 6-phase methodology with systematic confound analysis, adversarial robustness testing, cross-model validation, and honest documentation of why perfect metrics on tiny datasets are red flags.
+Exploratory experiments investigating whether probing methodologies inspired by deception-detection research transfer into biologically sensitive task domains through systematic adversarial robustness testing.
 
 ---
 
-## Research Overview
+## Overview
 
-### Phases Completed
+This repository contains a six-phase confound-controlled interpretability study evaluating biological task separability in language model hidden states.
 
-**Phase 1: Apollo Behavioral Baseline**
-- Reconstructed deception classifier from Apollo Research annotations
-- ROC-AUC = 0.64 (modest behavioral signal)
+**Research Question:** Can activation-space probing distinguish between benign and harmful biological task framings when vocabulary, paraphrasing, and realistic scaffolding are controlled?
 
-**Phase 2: Hidden-Layer Analysis**
-- Mean-pooled representations from all 25 transformer layers
-- ROC-AUC = 1.0 across all layers (29% vocabulary overlap)
-
-**Phase 3: Vocabulary Control Analysis**
-- Isolated semantic signal from lexical confounds
-- ROC-AUC = 1.0 (56% vocabulary overlap)
-
-**Phase 4: Adversarial Robustness Testing**
-- Paraphrase attacks: ROC-AUC = 1.0 (62% overlap)
-- Scaffold attacks: ROC-AUC = 1.0 (45% overlap)
-
-**Phase 5: Cross-Model Comparison**
-- Pythia-410m (410M params, 25 layers): ROC-AUC = 1.0
-- GPT-Neo-125m (125M params, 12 layers): ROC-AUC = 1.0
-
-**Phase 6: Sparse Autoencoder Analysis**
-- Top 5 features achieve ROC-AUC = 1.0
-- Top 10, 20, all 1024 features also achieve ROC-AUC = 1.0
-- Sparsity paradox: Perfect metrics at extreme sparsity = overfitting
-
----
-
-## Complete Evaluation Summary
-
-| Phase | Test Type | Result | Key Metric |
-|---|---|---|---|
-| 1 | Behavioral baseline | ✅ | ROC-AUC = 0.64 |
-| 2 | Hidden-layer (all 25) | ✅ | ROC-AUC = 1.0 |
-| 3 | Vocabulary control | ✅ | ROC-AUC = 1.0 (56% overlap) |
-| 4a | Paraphrase attacks | ✅ | ROC-AUC = 1.0 (62% overlap) |
-| 4b | Scaffold attacks | ✅ | ROC-AUC = 1.0 (45% overlap) |
-| 5a | Cross-model (Pythia) | ✅ | ROC-AUC = 1.0 (25 layers) |
-| 5b | Cross-model (GPT-Neo) | ✅ | ROC-AUC = 1.0 (12 layers) |
-| 6 | Sparse features | ✅ | ROC-AUC = 1.0 (5 features) |
-
----
-
-## Why Perfect Metrics Are Red Flags
-
-Perfect ROC-AUC = 1.0 appears validating but raises critical concerns:
-
-**Sample Size Problem:**
-- N=10 samples in 1024-dimensional space (102.4:1 ratio)
-- Logistic regression trivially overfits at this ratio
-- Statistical overfitting most parsimonious explanation
-
-**Sparsity Paradox:**
-- Perfect separability with 5 features MORE suspicious than 1024
-- 5 features on 10 samples = 1 feature per 2 samples
-- This is extreme overfitting, not real signal
-
-**Evidence For Semantic Signal:**
-✅ Separability persists under vocabulary control  
-✅ Separability survives paraphrasing  
-✅ Separability survives realistic scaffolding  
-✅ Separability generalizes across models  
-✅ Task distinction encodes sparsely  
-
-**Evidence For Overfitting:**
-❌ N=10 too small for validation  
-❌ Perfect metrics at ALL sparsity levels  
-❌ No cross-validation performed  
-❌ Single model family tested  
-❌ Perfect metrics = overfitting in ML  
-
----
-
-## Critical Limitations
-
-1. **Sample Size (CRITICAL):** N=10 is far too small for any statistical claims
-2. **No Cross-Validation:** Training/evaluation on same data
-3. **Single Model Family:** EleutherAI only; no biological models
-4. **Manual Prompts:** Not representative of realistic workflows
-5. **Passive Attacks Only:** No active adversarial optimization
-6. **No Circuit Analysis:** Which neurons drive features unknown
-7. **Sparsity Is Suspicious:** Perfect metrics at extreme sparsity reinforce overfitting
-
-### What We Cannot Claim
-- Robust biological threat detection
-- Deployment-ready capability
-- Generalizable signal across diverse models
-- Mechanistic interpretability without validation
-
-### What We Can Claim
-- Separability persists under confound control
-- Semantic signal likely contributes information
-- Signal not purely lexical
-- Methodologically rigorous analysis across 6 phases
-- Reproducible, transparent pipeline
+**Answer:** Perfect separability persists across all confound-removal attacks (N=10), but sample size prevents validation claims. Work should be interpreted as **methodological prototyping** rather than operational capability.
 
 ---
 
 ## Project Structure
 
+```
 bio-capability-probing/
-├── README.md
-├── requirements.txt
 ├── notebooks/
 │   ├── 01_apollo_baseline.ipynb
 │   ├── 02_biological_probing.ipynb
-│   └── 03_hidden_layer_analysis.ipynb
-├── datasets/
-│   └── biological_prompts.csv
+│   └── [additional phase notebooks]
+├── writeups/
+│   ├── baseline_replication.md
+│   ├── hidden_layer_analysis.md
+│   ├── vocabulary_control_analysis.md
+│   ├── adversarial_robustness_analysis.md
+│   ├── scaffold_attacks_analysis.md
+│   ├── sparse_autoencoder_analysis.md
+│   ├── cross_model_comparison.md
+│   └── biological_transfer_experiment.md
 ├── figures/
 │   ├── confusion_matrix.png
 │   ├── roc_curve.png
+│   ├── layer_separability.png
 │   ├── vocabulary_control_comparison.png
-│   ├── adversarial_robustness_comparison.png
-│   ├── complete_adversarial_robustness_grid.png
-│   ├── complete_adversarial_summary.png
-│   └── sparse_autoencoder_analysis.png
+│   ├── scaffold_attacks_layer_performance.png
+│   ├── feature_importance_distribution.png
+│   ├── cross_model_roc_comparison.png
+│   └── [additional figures]
 ├── results/
-│   └── baseline_metrics.json
-└── writeups/
-├── baseline_replication.md
-├── vocabulary_control_analysis.md
-├── adversarial_robustness_analysis.md
-├── scaffold_attacks_analysis.md
-├── cross_model_comparison.md
-├── sparse_autoencoder_analysis.md
-└── RESEARCH_SUMMARY.md
-
+│   ├── baseline_metrics.json
+│   ├── layer_analysis_results.csv
+│   └── [additional result files]
+├── requirements.txt
+└── README.md
+```
 
 ---
 
-## Reproducing Results
+## Key Results
+
+### Eight-Phase Confound-Controlled Study
+
+This research evaluates biological task separability through systematic adversarial robustness testing. Detailed analysis for each phase available in `/writeups` directory.
+
+#### Phase 1: Apollo Behavioral Baseline
+- **Approach:** Reconstructed deception-classification pipeline using Apollo Research rollout annotations
+- **Result:** Logistic regression achieves modest above-chance separability (ROC-AUC: 0.64, accuracy: 0.67)
+- **Interpretation:** Establishes methodological foundation; performance constrained by lexical/framing confounds
+
+![Confusion Matrix](figures/confusion_matrix.png)
+
+![ROC Curve](figures/roc_curve.png)
+
+- **Reference:** See `writeups/baseline_replication.md` for full methodology and feature analysis
+
+#### Phase 2: Hidden-Layer Separability Mapping
+- **Approach:** Linear probes trained independently on each transformer layer (all 25 layers of Pythia-410m)
+- **Result:** Perfect separability (ROC-AUC = 1.0) persists across all layers
+- **Signal distribution:** Not confined to early (lexical) or late (abstract) layers; concentrated in intermediate regions
+
+![Layer Separability Analysis](figures/layer_separability.png)
+
+- **Reference:** See `writeups/hidden_layer_analysis.md`
+
+#### Phase 3: Vocabulary-Controlled Confounds
+- **Approach:** Created prompt pairs with shared core biological vocabulary; increased overlap from 29% to 56%
+- **Result:** Separability persists (ROC-AUC = 1.0) despite vocabulary control
+- **Key finding:** ~40% of apparent separability in original prompts was driven by vocabulary disjointness; remaining signal attributed to semantic task framing
+
+![Vocabulary Control Comparison](figures/vocabulary_control_comparison.png)
+
+- **Interpretation:** Semantic distinction (therapeutic vs. attack intent) encodes meaningful signal, but sample size prevents validation
+- **Reference:** See `writeups/vocabulary_control_analysis.md`
+
+#### Phase 4: Adversarial Robustness — Paraphrase Attacks
+- **Approach:** Rewrote prompts semantically while preserving intent; increased vocabulary overlap to 62%
+- **Result:** Separability survives paraphrasing attacks (ROC-AUC = 1.0 across all layers)
+- **Implication:** Signal is not purely superficial vocabulary; semantic task framing is robust to lexical variation
+- **Reference:** See `writeups/adversarial_robustness_analysis.md`
+
+#### Phase 5: Scaffold Attacks — Realistic Workflow Embedding
+- **Approach:** Embedded prompts in longer research narratives (≈150 words each); achieved lowest vocabulary overlap tested (45%)
+- **Result:** Perfect separability persists (ROC-AUC = 1.0)
+- **Significance:** Strongest evidence to date that signal is not lexical; most ecologically valid test
+
+![Scaffold Attacks Layer Performance](figures/scaffold_attacks_layer_performance.png)
+
+- **Reference:** See `writeups/scaffold_attacks_analysis.md`
+
+#### Phase 6: Sparse Feature Analysis
+- **Approach:** Ranked feature importance by activation difference; tested separability with subsets of features (1, 2, 5, 10, 20, 50, 100, all 1024)
+- **Result:** Perfect separability achievable with just 5 features out of 1024 (1 feature per 2 samples)
+- **Concern:** Extreme sparsity + extreme dimensionality mismatch = strong evidence for overfitting interpretation
+
+![Feature Importance Distribution](figures/feature_importance_distribution.png)
+
+- **Reference:** See `writeups/sparse_autoencoder_analysis.md`
+
+#### Phase 7: Cross-Model Generalization
+- **Approach:** Tested same prompts on two different model architectures (Pythia-410m vs. GPT-Neo-125m; 410M and 125M parameters respectively)
+- **Result:** Both models achieve perfect separability (ROC-AUC = 1.0 across all layers)
+- **Implication:** Signal not model-specific; generalizes across architectural variation within GPT family
+
+![Cross-Model ROC Comparison](figures/cross_model_roc_comparison.png)
+
+- **Limitation:** Same model family; biological foundation models (Evo 2, ESM, ProteinMPNN) not yet tested
+- **Reference:** See `writeups/cross_model_comparison.md`
+
+#### Phase 8: Biological Task Transfer Methodology
+- **Approach:** Exploratory framing of activation extraction pipeline adapted from deception-detection work; applies to constrained biological task domains
+- **Result:** Documents reproducible end-to-end workflow from prompt construction through hidden-state extraction to probe training
+- **Contribution:** Methodological prototyping rather than deployable capability; establishes foundation for scaled-up biological interpretability research
+- **Reference:** See `writeups/biological_transfer_experiment.md`
+
+---
+
+## Critical Limitations
+
+**All findings come with a mandatory epistemological caveat:**
+
+- **Sample size:** N=10 (5 benign + 5 harmful) in 1024-dimensional representation space
+- **Dimensionality ratio:** 102.4:1 (features to samples) — statistical trivial separability threshold
+- **Evaluation method:** Training and testing on same data; no cross-validation
+- **Overfitting assessment:** Perfect metrics at all sparsity levels (1024 features, 100 features, 5 features) indicate memorization dominates
+
+**What these results do NOT establish:**
+
+- ❌ Operational biological monitoring capability
+- ❌ Robust threat assessment
+- ❌ Generalizable semantic signal (requires N ≥ 100+ with cross-validation)
+- ❌ Mechanistic understanding of representational structure
+
+**What these results DO demonstrate:**
+
+- ✅ Separability is not purely lexical (vocabulary control methodology works)
+- ✅ Signal survives multiple confound-removal attacks (paraphrasing, scaffolding, sparse features)
+- ✅ Separability generalizes across architectural variation (different model families in same architecture lineage)
+- ✅ Rigorous adversarial robustness testing is feasible at exploratory scale
+
+---
+
+## Quick Start
+
+### Reproduce Apollo Behavioral Baseline
 
 ```bash
-git clone https://github.com/allanochola/bio-capability-probing.git
-cd bio-capability-probing
 pip install -r requirements.txt
-
 jupyter notebook notebooks/01_apollo_baseline.ipynb
-jupyter notebook notebooks/02_biological_probing.ipynb
-jupyter notebook notebooks/03_hidden_layer_analysis.ipynb
 ```
+
+### Explore Biological Activation Probing
+
+```bash
+pip install -r requirements.txt
+jupyter notebook notebooks/02_biological_probing.ipynb
+```
+
+---
+
+## Methodology
+
+### Models Tested
+
+- **Pythia-410m** (410M parameters, 25 layers, 1024 hidden size)
+- **GPT-Neo-125m** (125M parameters, 12 layers, 768 hidden size)
+
+### Data
+
+- **Biological prompts:** Manually constructed exploratory examples (N=10 total: 5 benign, 5 harmful)
+- **Apollo baseline:** Reconstructed from Apollo Research deception-detection repository
+
+### Pipeline
+
+1. **Prompt construction** — Benign (therapeutic) vs. harmful (weaponization) task distinctions
+2. **Hidden-state extraction** — Mean-pooled representations from transformer layers
+3. **Linear probe training** — Logistic regression on hidden states
+4. **Evaluation** — ROC-AUC, accuracy, confusion matrix
+
+### Confound-Removal Attacks
+
+| Phase | Attack Type | Vocabulary Overlap | Result |
+|---|---|---|---|
+| 3 | Vocabulary control | 56% | ROC-AUC 1.0 |
+| 4 | Paraphrase attacks | 62% | ROC-AUC 1.0 |
+| 5 | Scaffold attacks | 45% | ROC-AUC 1.0 |
+
+---
+
+## Data & Reproducibility
+
+- **Apollo baseline dataset:** Reconstructed from [Apollo Research deception-detection repository](https://github.com/ApolloResearch/deception-detection/)
+- **Biological prompts:** Manually constructed exploratory examples (see `writeups/` for details)
+- **Metrics:** See `results/baseline_metrics.json` and `results/layer_analysis_results.csv`
+- **Dependencies:** See `requirements.txt`
+
+---
+
+## Important Limitations
+
+This work does **NOT** establish:
+
+- Robust deception detection
+- Biological threat assessment
+- Operational monitoring capability
+
+The experiments are intentionally exploratory and susceptible to:
+
+- Dataset imbalance (Apollo baseline)
+- Lexical confounds (addressed across phases)
+- Topical separability
+- Prompt artifacts
+- Tiny sample sizes (N=10)
+- Overfitting in high-dimensional space
 
 ---
 
 ## Validation Roadmap
 
-To move from exploratory to validated research:
+To transition from exploratory to validated research, the following are required:
 
-1. Expand dataset to N ≥ 100+ biological prompts
-2. Implement k-fold cross-validation
-3. Test adversarial robustness with active optimization
-4. Evaluate on biological models (Evo 2, ProteinMPNN, ESM-family)
-5. Investigate mechanistic basis (which neurons drive separability?)
+1. **Expand dataset** to N ≥ 100-200 biological prompt pairs with diverse vocabulary and task domains
+2. **Implement proper cross-validation** (k-fold evaluation with held-out test set)
+3. **Test biological foundation models** (Evo 2, ProteinMPNN, ESM-family) for generalization beyond GPT-family
+4. **Adversarial optimization** (active attempts to fool the classifier, not passive rewriting)
+5. **Mechanistic investigation** (circuit analysis, feature attribution, causal interventions to identify drivers of separability)
+
+Current work should be interpreted as **methodological prototyping and exploratory interpretability analysis** rather than deployable capability.
+
+---
+
+## Future Directions
+
+Potential extensions include:
+
+- Larger biological prompt datasets with diverse vocabulary and task domains
+- Intermediate-layer probing across all layers
+- Adversarial robustness evaluation with active optimization
+- Hidden-state transfer analysis across model families
+- Sparse autoencoder analysis to identify interpretable features
+- Cross-model comparison on biological foundation models (Evo, ESM, ProteinMPNN)
+- Circuit identification via causal interventions
+- Mechanistic analysis of feature attribution
+
+---
+
+## Figures
+
+### Phase 1: Apollo Baseline
+- `confusion_matrix.png` — Classifier performance on deception-graded rollouts
+- `roc_curve.png` — ROC curve (AUC 0.64) showing modest separability
+
+### Phase 2: Hidden-Layer Analysis
+- `layer_separability.png` — ROC-AUC progression across all 25 layers
+
+### Phase 3: Vocabulary Control
+- `vocabulary_control_comparison.png` — Separability at different vocabulary overlap levels (29%, 56%)
+
+### Phase 5: Scaffold Attacks
+- `scaffold_attacks_layer_performance.png` — Layer-wise ROC-AUC for scaffolded prompts (45% overlap)
+
+### Phase 6: Sparse Features
+- `feature_importance_distribution.png` — Feature ranking by activation difference; separability vs. sparsity
+
+### Phase 7: Cross-Model
+- `cross_model_roc_comparison.png` — ROC-AUC comparison across Pythia-410m and GPT-Neo-125m
 
 ---
 
@@ -178,7 +284,7 @@ To move from exploratory to validated research:
 
 ```bibtex
 @software{ochola2026biocapabilityprobing,
-  author = {Ochola, Allan},
+  author = {Ochola, Allan and Varadarajan, Vijayakumar},
   title = {Bio Capability Probing: Exploratory Activation-Space Monitoring for Biological Task Domains},
   year = {2026},
   url = {https://github.com/allanochola/bio-capability-probing},
@@ -186,18 +292,16 @@ To move from exploratory to validated research:
 }
 ```
 
-**Zenodo:** https://doi.org/10.5281/zenodo.20244912
+---
+
+## License
+
+MIT License - See LICENSE file for details
 
 ---
 
-## Contact
+**Status:** Exploratory research artifact | **Last updated:** May 2026
 
-**Author:** Allan Ochola  
-**Email:** allanochola4@gmail.com  
-**GitHub:** github.com/allanochola  
+**Associated Publication:** Ochola, A. & Varadarajan, V. (2026). Bio Capability Probing: Exploratory Activation-Space Monitoring for Biological Task Domains. Zenodo. https://doi.org/10.5281/zenodo.20244912
 
----
-
-**Status:** ✅ Exploratory Research Complete | ✅ Published to Zenodo | ⏳ Validation Phase (Requires larger dataset + cross-validation)
-
-**Last Updated:** May 2026
+**Extended Analysis:** See `ZENODO_EXTENSION_PHASES_5-8.md` for phases 5–8 documentation.
