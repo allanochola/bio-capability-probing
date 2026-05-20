@@ -14,11 +14,11 @@ This research investigates whether activation-space probing methodologies develo
 
 ## Research Motivation
 
-Field deployment of the Vimax multi-modal mineral intelligence platform across six Kenyan counties (2023–2025) revealed three categories of infrastructure-level AI failures:
+Field deployment of the Vimax multi-modal mineral intelligence platform across six Kenyan counties (2023–2025) surfaced three categories of infrastructure-level AI failure:
 
-1. **Silent degradation** — Model F1 dropping from 0.78 to 0.62 over 4 months, undetected for 10+ weeks
-2. **Miscalibrated confidence** — Confidence scores decoupling from actual accuracy (19-point gaps observed)
-3. **Undetected oversight gaps** — 50 system failures over 24 months without triggering alerts
+1. **Silent degradation** — Model performance declining over months, undetected without ground-truth monitoring
+2. **Miscalibrated confidence** — Confidence scores decoupling from actual accuracy
+3. **Undetected oversight gaps** — System failures accumulating without triggering alerts
 
 **Core insight:** Infrastructure and monitoring are the safety bottleneck in resource-constrained settings, not model architecture.
 
