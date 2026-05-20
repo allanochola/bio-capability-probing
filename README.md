@@ -50,6 +50,18 @@ bio-capability-probing/
 
 ---
 
+## Important Notes
+
+### Zenodo Publication Scope
+The current Zenodo publication (DOI: 10.5281/zenodo.20244912) documents phases 1–3 of this research. **Phases 4–8 are documented in this repository and in the `/writeups` directory but are not yet in the Zenodo paper.**
+
+Extended analysis covering phases 4–8 will be published as a supplementary document. See `ZENODO_EXTENSION_PHASES_5-8.md` (in development) or the `/writeups` directory for current phase documentation.
+
+### Dataset Expansion in Progress
+Current research documented here uses N=10 biological prompt pairs for exploratory methodological validation. **We are actively expanding the dataset to N=500 prompt pairs** with diverse vocabulary, task domains, and semantic variations to enable robust k-fold cross-validation and statistical validation of findings. This scaled-up evaluation with proper train/test splitting will be the subject of follow-up research.
+
+---
+
 ## Key Results
 
 ### Eight-Phase Confound-Controlled Study
@@ -233,13 +245,16 @@ The experiments are intentionally exploratory and susceptible to:
 
 To transition from exploratory to validated research, the following are required:
 
-1. **Expand dataset** to N ≥ 100-200 biological prompt pairs with diverse vocabulary and task domains
-2. **Implement proper cross-validation** (k-fold evaluation with held-out test set)
+1. **Expand dataset to N=500** biological prompt pairs with diverse vocabulary and task domains
+   - Diverse safety framings (therapeutic, research, defense, weaponization)
+   - Vocabulary variation within benign/harmful categories
+   - Proper annotation scheme with inter-rater reliability
+2. **Implement k-fold cross-validation** (5-fold or 10-fold with proper train/test/validation splits)
 3. **Test biological foundation models** (Evo 2, ProteinMPNN, ESM-family) for generalization beyond GPT-family
 4. **Adversarial optimization** (active attempts to fool the classifier, not passive rewriting)
 5. **Mechanistic investigation** (circuit analysis, feature attribution, causal interventions to identify drivers of separability)
 
-Current work should be interpreted as **methodological prototyping and exploratory interpretability analysis** rather than deployable capability.
+Current work (N=10) should be interpreted as **methodological prototyping and exploratory interpretability analysis**. Next phase (N=500 with CV) will provide **validated** claims suitable for deployment research.
 
 ---
 
@@ -303,6 +318,6 @@ MIT License - See LICENSE file for details
 
 **Status:** Exploratory research artifact | **Last updated:** May 2026
 
-**Associated Publication:** Ochola, A. & Varadarajan, V. (2026). Bio Capability Probing: Exploratory Activation-Space Monitoring for Biological Task Domains. Zenodo. https://doi.org/10.5281/zenodo.20244912
+**Associated Publication:** Ochola, A. (2026). Bio Capability Probing: Exploratory Activation-Space Monitoring for Biological Task Domains. Zenodo. https://doi.org/10.5281/zenodo.20244912
 
 **Extended Analysis:** See `/writeups` directory for detailed phase documentation (8 comprehensive writeups).
