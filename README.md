@@ -21,19 +21,6 @@ This repository documents a systematic investigation into whether linear probes 
 
 ---
 
-## Important Notes
-
- 
-
-### Zenodo Publication Scope
-
-The current Zenodo publication (DOI: 10.5281/zenodo.20244912) documents phases 1–3 of this research. **Phases 4–9 are documented in this repository and in the `/writeups` directory but are not yet in the Zenodo paper.**
-
-
-Extended analysis covering phases 4–9 will be published as a supplementary document. See ` `/writeups` directory for current phase documentation.
-
-
-
 ## Quick Start
 
 ### Run Phase 9 (Held-Out Generalization Test)
@@ -220,11 +207,11 @@ train_harmful = [
 
 ### For AI Safety Research
 
-**Honest negative results prevent wasted effort.** If this approach had been promising, months of follow-up work would have been justified. Instead, the negative result clarifies boundaries and redirects research.
+**Honest negative results prevent wasted effort.** If this approach had been promising, months of follow-up work would have been justified. Instead, the negative result clarifies boundaries and redirects research toward approaches that may actually work.
 
 ### For Biosecurity
 
-**Activation-space monitoring is not currently deployment-ready.** Current approach cannot reliably detect hazardous knowledge at small N. Researchers must either increase N significantly, reformulate the task, or pursue different mechanisms.
+**Activation-space monitoring is not currently deployment-ready.** The current approach cannot reliably detect hazardous knowledge at small N. Researchers must either increase N significantly, reformulate the task, or pursue different mechanisms entirely. Function-based synthesis screening, behavior-based detection, and mechanistic interpretability (circuits, SAEs) remain viable alternatives.
 
 ### For Mechanistic Interpretability
 
@@ -262,21 +249,17 @@ Hand-authored prompts and WMDP-Bio target slightly different threat models, caus
 
 ## Future Directions
 
-### Option A: Larger N with Benchmark-Aligned Data
-- Expand to N≥100–200 with WMDP-Bio-aligned prompts
-- Implement proper train/validation/test split + k-fold CV
-- Timeline: 2–4 weeks
+Phase 9 establishes that the linear-probing approach at N=10 does not generalize. The next direction shifts from extending this methodology to testing whether it's the right tool at all.
 
-### Option B: Different Detection Target (Recommended)
-- Probe for features that unlearning targets, not "hazardous prompts"
-- Use mechanistic interpretability (circuits, SAEs) instead of linear probes
-- More aligned with interpretability's strengths
-- Timeline: 3–4 weeks
+**Working position:** Broad hazardous-biology representations are likely too diffuse and distribution-dependent for small-N linear probes. Narrower function-linked representations (protein structural class, binding affinity, synthesis-relevant properties) in foundation models trained on those tasks may still be mechanistically identifiable. That's the hypothesis worth testing next.
 
-### Option C: Validate on Well-Understood Tasks
-- Apply methodology to deception, sycophancy, refusal (where signals generalize)
-- Build confidence before tackling hard biosecurity problems
-- Timeline: 2–3 weeks
+**Three viable continuations:**
+
+1. **Causal interventions on protein foundation models** (Evo 2, ESM-family). Test whether features that probes identify are causally tied to model output, not just correlated with it. This is the move from correlational to causal evidence. Timeline: 3–4 weeks.
+
+2. **Apply the confound-controlled evaluation methodology to function-based DNA synthesis screening tools.** Test whether existing screening systems preserve discriminative power against AI-designed sequences (Wittmann et al., *Science* 2025). This has a direct deployment path through Fourth Eon and IGSC. Timeline: 2–4 weeks.
+
+3. **Larger N with WMDP-Bio-aligned prompts and k-fold cross-validation.** Lowest-risk continuation if probing turns out to be the right tool at scale. Most likely outcome: confirms Phase 9's diagnosis at higher confidence. Timeline: 2–4 weeks.
 
 ---
 
@@ -291,7 +274,7 @@ Hand-authored prompts and WMDP-Bio target slightly different threat models, caus
 ### For Practitioners
 - **Don't deploy this approach** — generalization fails
 - **If applying activation monitoring:** ensure larger N, benchmark alignment, held-out testing
-- **Consider alternatives:** behavior-based detection, sandboxing
+- **Consider alternatives:** behavior-based detection, sandboxing, function-based screening
 
 ### For Reproducibility
 - All code is self-contained in Jupyter notebooks
@@ -354,6 +337,9 @@ If you use this repository or findings, please cite:
 }
 ```
 
+**Zenodo Publication:** Phases 1–3 archived at https://zenodo.org/record/20244912  
+**Supplementary Phases 4–9:** Documented in this repository and `/writeups` directory
+
 ---
 
 ## Contact & Acknowledgments
@@ -411,7 +397,7 @@ Data (WMDP-Bio, MMLU) are used under their respective licenses.
 
 ### Q: What's the takeaway for biosecurity?
 
-**A:** Activation-space monitoring isn't ready for deployment. Future work must address data scale, task formulation, or use alternative approaches (circuits, SAEs, behavior-based detection).
+**A:** Activation-space monitoring isn't ready for deployment. Future work must address data scale, task formulation, or use alternative approaches (circuits, SAEs, behavior-based detection, function-based screening).
 
 ### Q: Can I run this locally?
 
@@ -427,9 +413,9 @@ Data (WMDP-Bio, MMLU) are used under their respective licenses.
 
 **Current Status:** ✅ Phases 1–9 complete, publication-ready  
 **Latest Update:** May 26, 2026  
-**Next Steps:** GitHub public, Zenodo DOI issued, MATS application submitted  
+**Next Steps:** Implementation of one of three viable continuations (protein FMs, synthesis screening, or larger-N probing)  
 
-For updates, star this repository or follow [@allanochola](https://twitter.com/allanochola) on Twitter/X.
+For updates, star this repository.
 
 ---
 
