@@ -21,6 +21,19 @@ This repository documents a systematic investigation into whether linear probes 
 
 ---
 
+## Important Notes
+
+ 
+
+### Zenodo Publication Scope
+
+The current Zenodo publication (DOI: 10.5281/zenodo.20244912) documents phases 1–3 of this research. **Phases 4–9 are documented in this repository and in the `/writeups` directory but are not yet in the Zenodo paper.**
+
+
+Extended analysis covering phases 4–9 will be published as a supplementary document. See ` `/writeups` directory for current phase documentation.
+
+
+
 ## Quick Start
 
 ### Run Phase 9 (Held-Out Generalization Test)
