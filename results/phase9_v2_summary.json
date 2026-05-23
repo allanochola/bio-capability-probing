@@ -1,0 +1,12 @@
+{
+  "experiment": "Phase 9 v2: Scaffold Generalization (WMDP-Bio + MMLU)",
+  "train_set": "N=5 hand-authored pairs (Phase 5)",
+  "test_set": "500 WMDP-Bio + 454 MMLU",
+  "model": "Pythia-410M",
+  "auroc_peak": 0.4879559471365639,
+  "auroc_peak_layer": 2,
+  "auroc_mean": 0.41333865638766526,
+  "recall_1pct_fpr_peak": 0.008,
+  "recall_1pct_fpr_layer": 0,
+  "threshold_met": false
+}
