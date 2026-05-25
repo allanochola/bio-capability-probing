@@ -2,173 +2,195 @@
 
 # Bio Capability Probing
 
-**A confound-controlled falsification study of linear probes for biological dual-use capability detection in language models.**
-
-![Status](https://img.shields.io/badge/status-Phases%201--9%20Complete-green)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Python](https://img.shields.io/badge/python-3.9%2B-blue)
-![Zenodo](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20244912-blue)
-
-Author: Allan Ochola · Preprint: [Zenodo 10.5281/zenodo.20244912](https://doi.org/10.5281/zenodo.20244912) · Last updated: May 26, 2026
+A confound-controlled falsification study of linear probes for biological dual-use capability detection in language models.
 
 ---
 
-## Headline finding
+## Summary
 
-In-distribution ROC-AUC of **1.0 collapses to 0.4880 on 954 held-out WMDP-Bio and MMLU items** under an Apollo-style train-easy-test-hard generalization test (Phase 9). Recall@1%FPR drops to **0.0080**, far below the 0.50 operational threshold.
+This project tests whether the standard small-N linear probing protocol detects biological dual-use capability in language model activations, or produces misleading signal driven by lexical artifacts and high-dimensional memorization.
 
-The diagnostic finding (Phase 6): perfect metrics are achievable with **five features out of 1024** — a memorisation signature in high-dimensional space at small N.
+Across nine phases of increasingly stringent evaluation — vocabulary controls, paraphrase attacks, scaffolded scenarios, sparsity diagnostics, same-family replication, and held-out benchmark testing — probes achieving perfect in-distribution AUROC (1.0) collapse to chance performance (0.488) on 954 held-out WMDP-Bio and MMLU items. Recall at 1% FPR peaks at 0.008, against a 0.50 operational threshold.
 
-The project was designed as a falsification test. Phases 2–8 produced in-distribution AUROC 1.0 across all 24 layers of Pythia-410M. Phase 9 confirms that those metrics measured memorisation, not robust feature detection.
+The Phase 6 sparsity analysis was consistent with this outcome: perfect in-distribution AUROC is achievable with five features out of 1024, a pattern consistent with memorization in high-dimensional space at small N.
 
-The methodological output is the diagnostic, not the classifier: a reproducible protocol for distinguishing genuine activation-space signal from high-dimensional memorisation artifacts before deployment claims get made.
+The hypothesis was falsified. Activation-space linear probes trained on small hand-authored datasets are not ready for operational biological capability detection without held-out benchmark validation. This repository documents the protocol that produced the falsification and the diagnostic that catches the failure mode early.
 
----
-
-## Phase 9: The Critical Test
-
-| Metric | Train (In-Dist) | Test (Out-of-Dist) | Threshold | Result |
-|--------|-----------------|--------------------|-----------|--------|
-| **AUROC** | 1.0000 | 0.4880 | ≥ 0.75 | ❌ FAIL |
-| **Recall@1%FPR** | 1.0000 | 0.0080 | ≥ 0.50 | ❌ FAIL |
-| **Generalization** | Perfect | Random | — | **❌ NEGATIVE** |
-
-### Visualization: AUROC by Layer
-
-![Phase 9 Results](figures/phase9_v2_results.png)
-
-Left: AUROC collapses across all 24 layers when tested on held-out data (red threshold at 0.75). Middle: Recall@1%FPR peaks at 0.008 (far below 0.50 threshold). Right: no layer achieves both high recall and low false positive rate.
-
-### ROC Curves: Top 4 Performing Layers
-
-![Phase 9 ROC Curves](figures/phase9_v2_roc_curves.png)
-
-Even the best-performing layers (2, 19, 20, 21) remain near the diagonal (chance-level ROC). Complete generalization failure.
+**Preprint:** Ochola, A. (2026). *Bio Capability Probing: A Confound-Controlled Falsification Study of Linear Probes for Biological Dual-Use Capability Detection.* Zenodo v2.1. [doi.org/10.5281/zenodo.20244912](https://doi.org/10.5281/zenodo.20244912)
 
 ---
 
-## Why this matters
+## Headline Result: The Falsification
 
-Most biological dual-use evaluations report benchmark performance. The harder question is whether screening signals preserve discriminative power under adversarial distribution shift, and whether the features classifiers rely on are causally tied to biological function or to surface sequence heuristics. Separability is not evidence of mechanistic understanding. This repository documents what that distinction looks like in practice.
+![Phase 9 out-of-distribution results: AUROC across all 24 layers clusters near 0.49 (left), Recall@FPR peaks at 0.008 (centre), summary metrics show complete collapse on both thresholds (right).](figures/phase9_ood_results.png)
 
----
+*Figure 1. Phase 9 out-of-distribution evaluation on 954 held-out WMDP-Bio and MMLU biology items. **Left:** AUROC by layer; all 24 layers cluster near 0.49, failing the 0.75 threshold. **Centre:** Recall at false positive rate curve for the best layer; peak Recall@1%FPR is 0.008, well below the 0.50 operational threshold. **Right:** Summary metrics. Both criteria fail. In-distribution separability does not survive distribution shift.*
 
-## Phase-by-phase summary
-
-| Phase | Test | N | Headline result | Interpretation |
-|-------|------|---|-----------------|----------------|
-| 1 | Apollo behavioural baseline | 356 | ROC-AUC 0.64 | Modest above-chance separability on authenticated alignment data. |
-| 2 | Hidden-layer separability mapping | 10 | ROC-AUC 1.0 across all 24 layers | Uniform saturation, not intermediate-layer peak. Consistent with overfitting in 1024-D at N=10. |
-| 3 | Vocabulary-controlled confounds | 10 | Separability persists from 29% → 56% overlap | ~40% of apparent signal is lexical; remainder survives lexical control. |
-| 4 | Paraphrase attacks (62% overlap) | 10 | ROC-AUC 1.0 | At N=10, indistinguishable from memorisation. |
-| 5 | Scaffold attacks (~150-word narratives) | 10 | ROC-AUC 1.0 | Most ecologically valid test in series. Still N-limited. |
-| **6** | **Sparse feature analysis** | **10** | **ROC-AUC 1.0 with 5/1024 features** | **Diagnostic core. Signature of memorisation in high-dimensional space.** |
-| 7 | Same-family replication (Pythia, GPT-Neo) | 10 | Both saturate at ROC-AUC 1.0 | Same-family only. Cross-family untested. |
-| 8 | End-to-end reproducible pipeline | 10 | Runs in Google Colab in 4–5 min | Pipeline transfers; whether results transfer is the open question Phase 9 answers. |
-| **9** | **Out-of-distribution generalization** | **954** | **AUROC 0.4880, Recall@1%FPR 0.0080** | **The signal does not survive distribution shift. Phases 2–8 measured memorisation.** |
-
-Phase 6 is the diagnostic. Phase 9 is the confirmation. Phases 2–5 and 7–8 are the robustness scaffolding around them.
+| Metric | In-distribution (Phases 2–8) | Out-of-distribution (Phase 9) |
+|---|---|---|
+| N | 10 | 954 |
+| AUROC | 1.000 | 0.488 |
+| Recall @ 1% FPR | — | 0.008 |
+| Operational threshold | — | 0.50 |
+| Result | Saturated | Falsified |
 
 ---
 
-## Repository structure
+## The Diagnostic Consistent with the Failure Mode
+
+The Phase 6 sparsity analysis is the methodological core of the study. For each transformer layer, we identified the minimum number of features (out of 1024) required to achieve in-distribution AUROC 1.0, using greedy feature selection by weight magnitude.
+
+**Across all 25 layers of Pythia-410M, perfect AUROC is achievable with five features out of 1024.**
+
+This sparsity profile is consistent with memorization of the N=10 training set in 1024-dimensional activation space rather than detection of a robust distributed feature, although the sparsity result alone does not rule out the possibility that a small number of features genuinely encode the target concept. Phase 9 is consistent with the same interpretation: in this study, the sparsity result was consistent with the later observed generalization failure.
+
+This diagnostic is the contribution most likely to generalize beyond biological capability detection. Any small-N linear probing protocol that achieves saturated metrics with extreme feature sparsity should be considered suspect until validated on held-out benchmarks.
+
+---
+
+## Phase Progression
+
+The nine phases function as an ablation series on the same hypothesis.
+
+| Phase | Test | N | AUROC | Finding |
+|---|---|---|---|---|
+| 1 | Apollo behavioural baseline | 356 | 0.64 | Weak above-chance signal on authenticated deployment data |
+| 2 | Hidden-layer separability | 10 | 1.0 | Uniform saturation across all 25 layers — overfitting flag |
+| 3 | Vocabulary control | 10 | 1.0 | ~40% of signal is lexical; remainder survives lexical control |
+| 4 | Paraphrase attacks | 10 | 1.0 | 62% vocabulary overlap, no degradation |
+| 5 | Scaffold attacks | 10 | 1.0 | 150-word biological research narratives, no degradation |
+| 6 | Sparse feature analysis | 10 | 1.0 | 5/1024 features sufficient — **memorization diagnostic** |
+| 7 | Same-family replication | 10 | 1.0 | Pythia-410M and GPT-Neo-125M both saturate |
+| 8 | Reproducible pipeline | 10 | 1.0 | End-to-end Colab notebook, 4–5 min runtime |
+| 9 | Out-of-distribution generalization | 954 | 0.488 | Held-out WMDP-Bio + MMLU — **falsification** |
+
+Phases 2–8 measure in-distribution separability under increasingly stringent confound controls. Phase 6 is the diagnostic that predicts the Phase 9 outcome. Phase 9 is the falsification test on held-out benchmark items.
+
+---
+
+## Phase 9: Layer-by-Layer ROC Curves
+
+![ROC curves for the top four performing layers in Phase 9 (layers 2, 19, 20, 21). All curves sit below the chance diagonal at AUROC 0.307 to 0.325 on the labeled orientation; inverted predictions would yield AUROC 0.675 to 0.693, still below the 0.75 operational threshold.](figures/phase9_roc_curves_top4.png)
+
+*Figure 2. ROC curves for the four best-performing layers under Phase 9 evaluation. All four curves sit below the chance diagonal (AUROC 0.307–0.325 on the labeled orientation; inverted predictions yield AUROC 0.675–0.693, still well below the 0.75 operational threshold and consistent with no robust biological capability signal). The pattern is uniform across the transformer stack; no layer carries a generalizable signal in either polarity under the configurations tested.*
+
+---
+
+## Phase 9 Protocol
+
+**Training set.** N = 10 hand-authored biological capability/control pairs (5 capability, 5 control), all imperative-form prompts.
+
+**Test set.** 954 held-out items with no overlap with training:
+- 500 items from WMDP-Bio (multiple choice questions evaluating biosecurity-relevant knowledge; Li et al., 2024)
+- 454 items from MMLU biology subjects (multiple choice biology questions)
+
+**Protocol.** Train linear probes on N=10 hand-authored pairs across all 24 transformer layers of Pythia-410M, using frozen weights and mean-pooled hidden states. Evaluate each probe on the 954-item held-out set. Report AUROC by layer and Recall at 1% FPR for the best-performing layer. Bootstrap 95% confidence intervals computed on the Phase 9 metric (N=954).
+
+**Result.** AUROC across all 24 layers clusters between 0.48 and 0.51. Recall@1%FPR peaks at 0.008 against an operational threshold of 0.50. The in-distribution signal does not survive distribution shift.
+
+**Confounds.** Format mismatch (training on imperatives, evaluating on MCQs) is a real distribution shift but also a design confound; the Phase 9 result is consistent with either a generalization failure of the underlying signal or with task misalignment between formats. Disentangling these requires within-format generalization tests not yet run. Cross-family transfer (Mistral, Llama, Gemma, biological foundation models) is untested. N=10 is intentionally small for rapid iteration; N≥100 with WMDP-aligned prompts is the next test.
+
+---
+
+## What This Work Establishes
+
+**A reproducible falsification protocol.** A method for testing whether in-distribution probe metrics reflect genuine feature detection or memorization artifacts in high-dimensional space. The protocol runs end-to-end in 4–5 minutes on a Colab GPU and applies to any linear probing setup.
+
+**A diagnostic whose behaviour was consistent with the failure mode.** The Phase 6 sparsity analysis is consistent with memorization when extreme sparsity (5/1024 features) achieves perfect in-distribution AUROC. In this study, the sparsity result was consistent with the later observed Phase 9 generalization failure. A single co-occurrence at N=1 study scale does not establish predictive validity; whether the diagnostic generalizes across probing setups, model families, and target concepts is an open empirical question.
+
+**A negative result on the standard protocol.** Under the configurations tested — small N, hand-authored prompts, Pythia-410M and GPT-Neo-125M, mean-pooled activations, linear probes — in-distribution separability does not survive evaluation on held-out WMDP-Bio and MMLU items. This is a finding about the protocol, not a final claim about activation-space probing.
+
+**Implementation guidance.** Practitioners deploying activation-space probes for biological capability detection should validate on held-out benchmarks before operational claims. In-distribution metrics at small N are not sufficient evidence of robust feature detection.
+
+---
+
+## Repository Structure
 
 ```
 bio-capability-probing/
 ├── notebooks/
-│   ├── 01_apollo_baseline.ipynb
-│   ├── 02_layer_separability_vocabulary_control.ipynb
-│   ├── 04_paraphrase_scaffold_attacks.ipynb
-│   ├── 06_sparse_feature_analysis.ipynb
-│   ├── 07_replication_reproducibility.ipynb
-│   └── 09_phase9_v2_wmdp_mmlu_generalization.ipynb
-├── results/
-│   ├── phase9_v2_results.csv
-│   └── phase9_v2_summary.json
-├── figures/
-│   ├── phase9_v2_results.png
-│   └── phase9_v2_roc_curves.png
-├── writeups/
-│   └── Phase_9_Held_Out_Generalization.md
+│   ├── 01_apollo_baseline.ipynb              # Phase 1
+│   ├── 02_biological_probing.ipynb           # Phases 2–3
+│   ├── 03_vocabulary_control.ipynb           # Phase 3 (full)
+│   ├── 04_paraphrase_attacks.ipynb           # Phase 4
+│   ├── 05_scaffold_attacks.ipynb             # Phase 5
+│   ├── 06_sparse_features.ipynb              # Phase 6 (diagnostic)
+│   ├── 07_same_family_replication.ipynb      # Phase 7
+│   ├── 08_reproducible_pipeline.ipynb        # Phase 8
+│   └── 09_phase9_wmdp_mmlu_generalization.ipynb  # Phase 9 (falsification)
+├── writeups/                                 # Phase-by-phase technical notes
+├── figures/                                  # ROC curves, sparsity plots, layer separability
+├── results/                                  # Metrics JSON, per-phase outputs
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## Quick start
+## Reproducibility
 
-**Open Phase 9 in Colab:** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/allanochola/bio-capability-probing/blob/main/notebooks/09_phase9_v2_wmdp_mmlu_generalization.ipynb)
-
-Run locally:
+All code is self-contained in Jupyter notebooks. The Phase 9 notebook runs end-to-end in approximately 4–5 minutes on a Colab GPU.
 
 ```bash
-git clone https://github.com/allanochola/bio-capability-probing.git
-cd bio-capability-probing
 pip install -r requirements.txt
-
-# Run Phase 9 (the critical test):
-jupyter notebook notebooks/09_phase9_v2_wmdp_mmlu_generalization.ipynb
-
-# Run Phase 6 (the diagnostic):
-jupyter notebook notebooks/06_sparse_feature_analysis.ipynb
-
-# Run Phase 1 (Apollo behavioural baseline):
-jupyter notebook notebooks/01_apollo_baseline.ipynb
+jupyter notebook notebooks/09_phase9_wmdp_mmlu_generalization.ipynb
 ```
 
-**Compute:** ~4–5 minutes on GPU (Tesla T4 or equivalent). Fixed random seeds (seed=42).
+**Dependencies:** transformers, torch, scikit-learn, datasets, matplotlib, numpy, pandas.
+
+**Models:** Pythia-410M (primary), GPT-Neo-125M (Phase 7 replication).
+
+**Data:** Training prompts hand-authored and included in the repository. WMDP-Bio and MMLU biology subsets loaded from Hugging Face Datasets.
 
 ---
 
-## What this work does and does not establish
+## Limitations
 
-**Establishes:**
+**Single model family.** Only Pythia-410M and GPT-Neo-125M tested. Cross-family transfer to Mistral, Llama, Gemma, or biological foundation models is untested.
 
-- A reproducible protocol for distinguishing genuine activation-space signal from memorisation artifacts at small N in high-dimensional space.
-- That linear probes trained on N=10 biological prompt pairs on Pythia-410M do not generalize to held-out WMDP-Bio or MMLU benchmarks, despite perfect in-distribution metrics.
-- That perfect in-distribution metrics are achievable with five features out of 1024 — sufficient evidence to treat saturated AUROC as a diagnostic for overfitting, not a positive result.
+**Small N.** N=10 is intentionally small for rapid iteration and to surface memorization artifacts. The behavior at N≥100 with WMDP-aligned training data is the next test.
 
-**Does not establish:**
+**Hand-authored threat model.** Training prompts encode a specific operationalization of biological dual-use capability. WMDP-Bio and MMLU encode different ones. Task misalignment is a real confound, not just a limitation.
 
-- Robust biological dual-use detection.
-- Operational monitoring capability.
-- That the underlying methodology will fail at scale — only that it fails in the regime tested.
-- Anything about biological foundation models (Evo 2, ESM-family). That is the next test.
+**Format mismatch.** Training on imperative prompts and testing on MCQs is a realistic distribution shift but also a design confound; future work should evaluate within-format generalization first.
+
+**Correlational analysis only.** Linear probing is correlational. Causal claims about the underlying representations require activation patching, sparse autoencoder analysis, or circuit-level work, none of which is performed here.
 
 ---
 
-## Next directions
+## Future Directions
 
-In order of preference:
+**Biological foundation models with causal analysis.** Port the Phase 6 sparsity diagnostic and Phase 9 generalization protocol to Evo 2 and ESM-family models. Add activation patching and circuit analysis. Synthesis screening as the deployment target. Timeline: 3–4 weeks.
 
-1. **Causal interventions on protein foundation models** (Evo 2, ESM-family). Port the Phase 6 sparsity diagnostic and Phase 9 generalization protocol onto biological foundation models, with synthesis screening as the deployment target. Add circuit analysis to test whether identified features are causally tied to model outputs. Timeline: 3–4 weeks.
+**Larger N with task-aligned training.** Expand to N≥100 with WMDP-aligned prompts and proper k-fold cross-validation. Test whether the falsification holds at scale or whether N=10 was the critical limiter. Timeline: 2–4 weeks.
 
-2. **Function-based DNA synthesis screening.** Apply the confound-controlled evaluation methodology to existing screening systems. Test whether they preserve discriminative power against AI-designed sequences. Timeline: 2–4 weeks.
-
-3. **Larger N with WMDP-Bio-aligned prompts and k-fold cross-validation.** Lowest-risk continuation if probing turns out to be the right tool at scale. Most likely outcome: confirms Phase 9's diagnosis at higher statistical power. Timeline: 2–4 weeks.
-
-The working position: broad hazardous-biology representations are likely too diffuse and distribution-dependent for small-N linear probes. Narrower function-linked representations — protein structural class, binding affinity, synthesis-relevant properties — may still be mechanistically identifiable in foundation models trained on those tasks.
+**Function-based DNA synthesis screening evaluation.** Apply the confound-controlled evaluation methodology to existing screening systems. Timeline: 2–4 weeks.
 
 ---
 
 ## Citation
 
 ```bibtex
-@software{ochola2026biocapabilityprobing,
-  author  = {Ochola, Allan},
-  title   = {Bio Capability Probing: A Confound-Controlled Falsification Study of Linear Probes for Biological Dual-Use Capability Detection},
-  year    = {2026},
-  publisher = {Zenodo},
-  doi     = {10.5281/zenodo.20244912},
-  url     = {https://github.com/allanochola/bio-capability-probing}
+@misc{ochola2026biocapabilityprobing,
+  author       = {Ochola, Allan},
+  title        = {Bio Capability Probing: A Confound-Controlled Falsification Study
+                  of Linear Probes for Biological Dual-Use Capability Detection},
+  year         = {2026},
+  publisher    = {Zenodo},
+  version      = {v2.1},
+  doi          = {10.5281/zenodo.20244912},
+  url          = {https://doi.org/10.5281/zenodo.20244912}
 }
 ```
 
+---
+
 ## License
 
-MIT. See `LICENSE`.
+MIT License. See `LICENSE`.
 
 ---
 
-**Last updated:** May 26, 2026 · **Phases 1–9 complete** · **Preprint live on Zenodo**
+**Status:** Phases 1–9 complete. Preprint v2.1 deposited. Next: cross-family transfer and biological foundation model evaluation.
+
+**Last updated:** May 2026.
