@@ -267,7 +267,7 @@ Hand-authored prompts were designed for one threat model; WMDP-Bio was designed 
 - Expected timeline: 2–4 weeks
 - Risk: May still fail if task formulation is fundamentally misaligned
 
-### Option B: Different Detection Target (Recommended)
+### Option B: Different Detection Target
 - Probe for features that unlearning targets (WMDP), not "hazardous prompts"
 - Use mechanistic interpretability (circuits, SAEs) instead of linear probes
 - More aligned with interpretability's actual strengths
